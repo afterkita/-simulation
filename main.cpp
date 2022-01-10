@@ -20,8 +20,10 @@ public:
         m_circle->setFillColor(sf::Color(130 - 20 * (m_speed + m_speed), 0, 0));
         m_circle->setOrigin(0 + m_r, 0 + m_r);
         m_circle->setPosition(rand() % (3 * m_r + (width - (4 * m_r))), rand() % (3 * m_r + (heigh - (4 * m_r))));
-        Vector2f m_position = m_circle->getPosition();
 
+        Vector2f m_position = m_circle->getPosition();
+        m_x = m_position.x;
+        m_y = m_position.y;
     }
     ~Balloon()
     {
@@ -40,6 +42,14 @@ public:
     {
 
         return m_r;
+    }
+    int GetX()
+    {
+        return m_x;
+    }
+    int GetY()
+    {
+        return m_y;
     }
     void SetX(int x)
     {
@@ -73,6 +83,8 @@ public:
         }
         m_position.y += m_speedy;
         m_circle->setPosition(m_position);
+        m_x += m_speed;
+        m_y += m_speedy;
     }
 
 private:
@@ -80,24 +92,32 @@ private:
     Vector2f m_position;
     sf::CircleShape* m_circle = nullptr;
 };
+/*
 int kos(int s, std::vector<Balloon*> ballons)
 {
     int r = ballons[s]->GetR();
     int l = ballons.size();
-    Vector2f position2;
-    sf::CircleShape circle2 = *ballons[s]->Get();
-    position2 = circle2.getPosition();
-    int xs = position2.x;
-    int ys = position2.y;
+    
+    
+    
     int v1, v2, v3;
     for (int i = 0;i < l;i++)
     {
-        if (i != s)
+        if (i == s)
         {
-            circle2 = *ballons[i]->Get();
-            position2 = circle2.getPosition();
-            int x = position2.x;
-            int y = position2.y;
+            return -1;
+        }
+        else
+        {
+            sf::CircleShape circle2 = *ballons[s]->Get();
+
+            Vector2f position2 = circle2.getPosition();
+            sf::CircleShape circle1 = *ballons[i]->Get();
+            Vector2f position1 = circle1.getPosition();
+            int xs = position2.x;
+            int ys = position2.y;
+            int x = position1.x;
+            int y = position1.y;
             v1 = abs(xs - x);
             v2 = abs(ys - y);
             v3 = sqrt(v1 * v1 + v2 * v2);
@@ -107,17 +127,41 @@ int kos(int s, std::vector<Balloon*> ballons)
             }
             else
             {
+
+            }
+            {
                 return -1;
             }
-        }
-        else
-        {
-            return -1;
         }
 
 
     }
 
+}
+*/
+int kos(Balloon b1,Balloon b2)
+{
+    int r1, r2, x1, x2, y1, y2, v3;
+    r1 = b1.GetR();
+    r2 = b2.GetR();
+    x1 = b1.GetX();
+    y1 = b1.GetY();
+    x2 = b2.GetX();
+    y2 = b2.GetY();
+    v3 = sqrt((abs(x1 - x2) * abs(x1 - x2))) + ((abs(y1 - y2) * abs(y1 - y2)));
+    if (v3 > 1)
+    {
+        if (v3 <= (r1+r2))
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    return 0;
 }
 int main()
 {
@@ -126,8 +170,16 @@ int main()
     for (int i = 0;i < 20;i++) // 20 Шаров с начала
     {
         ballons.push_back(new Balloon());
-
+        
     }
+    int uy = 0;
+    for (const auto& circle : ballons)
+    {
+        circle->SetColor(200, uy*10,200);
+        uy++;
+    }
+    std::cout << uy << std::endl;
+
     sf::CircleShape circle2 = *ballons[0]->Get();
     int position1;
     Vector2f position2;
@@ -147,14 +199,28 @@ int main()
         window.clear(Color(100, 100, 100, 0));
 
         int yi = 0;
+        for (const auto& circle1 : ballons)
+        {
+            for (const auto& circle2 : ballons)
+            {
+                if (circle1 != circle2)
+                {
+                    if (kos(*circle1, *circle2) == 1)
+                    {
+                        circle2->SetColor(0, 0, 100);
+                    }
+                }
+                
+            }
+        }
         for (const auto& circle : ballons)
         {
             circle->Move();
-
-            if (kos(yi, ballons) != -1)
+            for (int ii = 0;ii < ballons.size();ii++)
             {
-                circle->SetColor(0, 0, 100);
+                
             }
+            
 
 
             window.draw(*circle->Get());
