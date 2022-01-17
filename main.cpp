@@ -165,9 +165,10 @@ int kos(Balloon b1,Balloon b2)
 }
 int main()
 {
+    int N = 20; // Количество шаров
     srand(time(0));
     std::vector<Balloon*> ballons; // Инициализация вектора с шарами для игры и создание первых фигур
-    for (int i = 0;i < 20;i++) // 20 Шаров с начала
+    for (int i = 0;i < N;i++) // 20 Шаров с начала
     {
         ballons.push_back(new Balloon());
         
@@ -175,10 +176,9 @@ int main()
     int uy = 0;
     for (const auto& circle : ballons)
     {
-        circle->SetColor(200, uy*10,200);
+        circle->SetColor(100, uy*20,100);
         uy++;
     }
-    std::cout << uy << std::endl;
 
     sf::CircleShape circle2 = *ballons[0]->Get();
     int position1;
@@ -216,13 +216,6 @@ int main()
         for (const auto& circle : ballons)
         {
             circle->Move();
-            for (int ii = 0;ii < ballons.size();ii++)
-            {
-                
-            }
-            
-
-
             window.draw(*circle->Get());
             yi++;
         }
